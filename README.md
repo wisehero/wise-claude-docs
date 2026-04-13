@@ -1,12 +1,12 @@
-# Claude & Claude Code 활용 가이드
+# Claude & Claude Code & Claude Cowork 활용 가이드
 
-이 가이드는 Claude와 Claude Code를 실전에서 효과적으로 활용하기 위한 공식 문서 기반 학습 자료입니다. Anthropic 공식 문서를 바탕으로 정리했으며, 처음 시작하는 사람부터 이미 사용 중인 사람까지 모두를 대상으로 합니다.
+이 가이드는 Claude, Claude Code, Claude Cowork를 실전에서 효과적으로 활용하기 위한 공식 문서 기반 학습 자료입니다. Anthropic 공식 문서를 바탕으로 정리했으며, 처음 시작하는 사람부터 이미 사용 중인 사람까지 모두를 대상으로 합니다.
 
 ---
 
 ## 이 가이드를 읽기 전에
 
-Claude는 AI 모델이고, Claude Code는 터미널에서 실행하는 CLI 도구입니다. 둘은 별개이지만 함께 쓸 때 가장 강력합니다. 이 가이드는 두 도구를 모두 다루며, Part 1(Claude)과 Part 2(Claude Code)로 나뉩니다.
+Claude는 AI 모델이고, Claude Code는 개발자를 위한 CLI 도구이며, Claude Cowork는 비개발자를 위한 데스크톱 에이전트입니다. 셋은 별개이지만 같은 Claude 모델 위에서 동작합니다. 이 가이드는 세 도구를 모두 다루며, Part 1(Claude), Part 2(Claude Code), Part 3(Claude Cowork)로 나뉩니다.
 
 ---
 
@@ -28,6 +28,19 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 ### 경로 B: 이미 사용 중인 분
 
 기본은 알고 있고 특정 주제를 더 깊이 파고 싶다면, 아래 전체 문서 목록에서 관심 있는 항목을 직접 선택하세요.
+
+### 경로 C: 비개발자 — Claude Cowork 시작하기
+
+개발자가 아니고 문서 작업, 데이터 분석, 파일 관리 등 지식 노동 자동화에 관심이 있다면 아래 순서를 추천합니다.
+
+| 순서 | 문서 | 이유 |
+|------|------|------|
+| 1 | [Cowork 시작하기](claude-cowork/01-시작하기.md) | 설치와 첫 작업 따라하기 |
+| 2 | [파일 다루기](claude-cowork/02-파일-다루기.md) | 파일 공유와 생성의 기본 |
+| 3 | [효과적인 지시 작성법](claude-cowork/03-효과적인-지시-작성법.md) | Cowork에게 잘 말하는 법 |
+| 4 | [실전 활용 사례](claude-cowork/06-실전-활용-사례.md) | 직무별 레시피 모음 |
+| 5 | [안전하게 사용하기](claude-cowork/07-안전하게-사용하기.md) | 보안과 주의사항 |
+| 6 | 나머지 | 필요한 주제 선택 |
 
 ---
 
@@ -58,6 +71,19 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 | [실전 워크플로우](claude-code/06-실전-워크플로우.md) | 중급~심화 | Git 연동, 멀티에이전트, 컨텍스트 관리 |
 | [단축키와 슬래시 명령어](claude-code/07-단축키와-명령어.md) | 기초 | 키보드 단축키, 슬래시 명령어 전체 레퍼런스 |
 | [하네스 엔지니어링](claude-code/08-하네스-엔지니어링.md) | 중급~심화 | 프롬프트 vs 하네스 비교, 6대 레이어, 설계 원칙, 전환 패턴 |
+
+### Part 3: Claude Cowork 활용
+
+| 문서 | 난이도 | 설명 |
+|------|--------|------|
+| [시작하기](claude-cowork/01-시작하기.md) | 기초 | Cowork 소개, 설치, Chat/Code와의 차이, 첫 작업 따라하기 |
+| [파일 다루기](claude-cowork/02-파일-다루기.md) | 기초 | 폴더 공유, 파일 읽기/생성/수정, Excel/Word/PPT/PDF 생성 |
+| [효과적인 지시 작성법](claude-cowork/03-효과적인-지시-작성법.md) | 기초~중급 | 나쁜 지시 vs 좋은 지시, 멀티스텝 분해, 프롬프트 템플릿 |
+| [외부 도구 연동](claude-cowork/04-외부-도구-연동.md) | 중급 | Gmail, Drive, Calendar, Zoom, DocuSign, 금융 데이터 연동 |
+| [반복 작업 자동화](claude-cowork/05-반복-작업-자동화.md) | 중급 | 스킬/플러그인, 예약 작업, Dispatch 모바일 연동 |
+| [실전 활용 사례](claude-cowork/06-실전-활용-사례.md) | 기초~중급 | 마케팅/재무/법무/운영/리서치/HR 직무별 시나리오 |
+| [안전하게 사용하기](claude-cowork/07-안전하게-사용하기.md) | 기초 | 보안 4계층, 폴더 권한, 민감 데이터 보호, Computer Use 주의사항 |
+| [팀 도입 가이드](claude-cowork/08-팀-도입-가이드.md) | 중급~심화 | RBAC, 예산 관리, 사용량 분석, 단계별 도입 전략 |
 
 ### 부록
 
@@ -99,3 +125,11 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 - [Claude Code Overview](https://docs.anthropic.com/en/docs/claude-code/overview) - Claude Code 소개
 - [Claude Code Quickstart](https://docs.anthropic.com/en/docs/claude-code/quickstart) - 빠른 시작 가이드
 - [Claude Code GitHub](https://github.com/anthropics/claude-code) - 소스 및 릴리스 노트
+
+### Claude Cowork 공식 문서
+
+- [Claude Cowork 제품 페이지](https://www.anthropic.com/product/claude-cowork) - 제품 소개
+- [Cowork 시작 가이드](https://support.claude.com/en/articles/13345190-get-started-with-claude-cowork) - 설치 및 설정
+- [Cowork 안전 사용 가이드](https://support.claude.com/en/articles/13364135-use-claude-cowork-safely) - 보안 모범 사례
+- [플러그인 사용](https://support.claude.com/en/articles/13837440-use-plugins-in-claude-cowork) - 플러그인 설치 및 관리
+- [예약 작업 설정](https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork) - 반복 작업 자동화
