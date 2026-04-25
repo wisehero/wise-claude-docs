@@ -90,6 +90,8 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 | 문서 | 설명 |
 |------|------|
 | [트러블슈팅](appendix/문제-해결.md) | 자주 겪는 문제와 해결법 |
+| [보리스 체르니의 Claude Code 설계 사상](appendix/보리스-체르니-인사이트.md) | Anthropic Head of Claude Code의 공개 발언 정리 — "왜 그렇게 만들었는가" |
+| [안드레이 카파시의 LLM 개념 사전](appendix/안드레이-카파시-개념.md) | Software 3.0, Vibe Coding, Context Engineering 등 시그니처 개념의 1차 출처 정리 |
 
 ---
 
