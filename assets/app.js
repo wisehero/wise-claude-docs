@@ -86,7 +86,7 @@ const el = (q) => document.querySelector(q);
 const contentEl = el("#content");
 const docTocEl = el("#docToc");
 const pageTocEl = el("#pageToc");
-const tocFooterEl = el(".toc-footer");
+const rightRailInnerEl = el("#rightRailInner");
 const progressEl = el("#progress");
 const searchEl = el("#search");
 const sidebarEl = el("#sidebar");
@@ -148,7 +148,7 @@ function setActiveSidebar(slug) {
 function renderLanding() {
   setActiveSidebar(null);
   pageTocEl.innerHTML = "";
-  tocFooterEl.classList.remove("has-content");
+  rightRailInnerEl.hidden = true;
   document.title = "wise-claude-docs · Claude 한국어 가이드";
 
   const cards = MANIFEST.parts
@@ -185,11 +185,11 @@ function renderLanding() {
   window.scrollTo({ top: 0 });
 }
 
-function buildPageToc(rootEl) {
+function buildPageToc(rootEl, slug) {
   const headings = rootEl.querySelectorAll("h2, h3, h4");
   if (!headings.length) {
     pageTocEl.innerHTML = "";
-    tocFooterEl.classList.remove("has-content");
+    rightRailInnerEl.hidden = true;
     return;
   }
   const items = [];
@@ -198,10 +198,11 @@ function buildPageToc(rootEl) {
     const id = h.id;
     if (!id) return;
     const text = h.textContent.replace(/[#§]\s*$/, "").trim();
-    items.push(`<li><a class="lvl-${lvl}" data-target="${id}" href="#${id}">${text}</a></li>`);
+    const href = `#/${slug}#${id}`;
+    items.push(`<li><a class="lvl-${lvl}" data-target="${id}" href="${href}">${text}</a></li>`);
   });
   pageTocEl.innerHTML = `<ol>${items.join("")}</ol>`;
-  tocFooterEl.classList.add("has-content");
+  rightRailInnerEl.hidden = false;
 }
 
 function decoratePageToc() {
@@ -274,7 +275,8 @@ async function renderDoc(slug) {
     h.id = id;
     const a = document.createElement("a");
     a.className = "heading-anchor";
-    a.href = `#${id}`;
+    a.href = `#/${doc.slug}#${id}`;
+    a.dataset.target = id;
     a.textContent = "§";
     h.appendChild(a);
   });
@@ -327,7 +329,7 @@ async function renderDoc(slug) {
   document.title = `${doc.title} · wise-claude-docs`;
 
   // Build page TOC
-  buildPageToc(contentEl.querySelector(".md"));
+  buildPageToc(contentEl.querySelector(".md"), doc.slug);
   decoratePageToc();
 
   // Scroll to top or anchor
@@ -401,6 +403,24 @@ window.addEventListener("hashchange", route);
 window.addEventListener("scroll", updateProgress, { passive: true });
 searchEl.addEventListener("input", applySearch);
 menuToggle.addEventListener("click", openSidebar);
+
+// Intercept anchor jumps within current doc — scroll without triggering route()
+function interceptInDocAnchor(e) {
+  const a = e.target.closest("a[data-target]");
+  if (!a) return;
+  const id = a.dataset.target;
+  if (!id) return;
+  const target = document.getElementById(id);
+  if (!target) return;
+  e.preventDefault();
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
+  const r = parseRoute();
+  if (r.type === "doc") {
+    history.replaceState(null, "", `#/${r.slug}#${id}`);
+  }
+}
+pageTocEl.addEventListener("click", interceptInDocAnchor);
+contentEl.addEventListener("click", interceptInDocAnchor);
 document.addEventListener("click", (e) => {
   if (
     sidebarEl.classList.contains("open") &&

@@ -26,16 +26,18 @@
     <input type="search" id="search" class="search" placeholder="문서 검색…" autocomplete="off" />
 
     <nav class="toc" id="docToc"></nav>
-
-    <div class="toc-footer">
-      <p class="toc-footer-label">현재 문서 목차</p>
-      <nav class="page-toc" id="pageToc"></nav>
-    </div>
   </aside>
 
   <main class="content" id="content">
     <div class="loading" id="loading">불러오는 중…</div>
   </main>
+
+  <aside class="right-rail" id="rightRail" aria-label="현재 문서 목차">
+    <div class="rail-inner" id="rightRailInner" hidden>
+      <p class="rail-label">현재 문서 목차</p>
+      <nav class="page-toc" id="pageToc"></nav>
+    </div>
+  </aside>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked@14.1.3/marked.min.js"></script>
