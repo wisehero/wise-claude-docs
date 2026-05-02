@@ -331,8 +331,9 @@ async function renderDoc(slug) {
   decoratePageToc();
 
   // Scroll to top or anchor
-  const hashAnchor = window.location.hash.split("#").slice(2).join("#");
+  let hashAnchor = window.location.hash.split("#").slice(2).join("#");
   if (hashAnchor) {
+    try { hashAnchor = decodeURIComponent(hashAnchor); } catch (_) {}
     const target = document.getElementById(hashAnchor);
     if (target) {
       setTimeout(() => target.scrollIntoView({ behavior: "instant", block: "start" }), 0);
@@ -348,7 +349,15 @@ function parseRoute() {
   const hash = window.location.hash || "";
   if (!hash || hash === "#" || hash === "#/") return { type: "home" };
   const m = hash.match(/^#\/(.+?)(?:#(.+))?$/);
-  if (m) return { type: "doc", slug: m[1], anchor: m[2] || null };
+  if (m) {
+    let slug = m[1];
+    let anchor = m[2] || null;
+    try { slug = decodeURIComponent(slug); } catch (_) {}
+    if (anchor) {
+      try { anchor = decodeURIComponent(anchor); } catch (_) {}
+    }
+    return { type: "doc", slug, anchor };
+  }
   return { type: "home" };
 }
 
