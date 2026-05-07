@@ -68,13 +68,23 @@ const MANIFEST = {
         { slug: "CHANGELOG", title: "CHANGELOG" },
       ],
     },
+    {
+      id: "external",
+      title: "별도 페이지",
+      desc: "단독 정적 페이지로 제공되는 가이드",
+      docs: [
+        { url: "skill-guide/", title: "Claude 스킬 구축 완벽 가이드 (번역)" },
+        { url: "visuals/", title: "Claude Code 가이드 HTML 허브" },
+      ],
+    },
   ],
 };
 
-// Flat list with prev/next refs
+// Flat list with prev/next refs (외부 링크는 제외 — 마크다운 라우팅 대상이 아님)
 const FLAT_DOCS = [];
 MANIFEST.parts.forEach((part) => {
   part.docs.forEach((doc) => {
+    if (doc.url) return;
     FLAT_DOCS.push({ ...doc, partId: part.id, partTitle: part.title });
   });
 });
@@ -124,10 +134,12 @@ function renderSidebar() {
   const html = MANIFEST.parts
     .map((part) => {
       const items = part.docs
-        .map(
-          (doc) =>
-            `<li><a class="toc-link" data-slug="${doc.slug}" data-search="${doc.title.toLowerCase()}" href="#/${doc.slug}">${doc.title}</a></li>`
-        )
+        .map((doc) => {
+          if (doc.url) {
+            return `<li><a class="toc-link toc-external" data-search="${doc.title.toLowerCase()}" href="${doc.url}">${doc.title} <span class="ext-arrow" aria-hidden="true">↗</span></a></li>`;
+          }
+          return `<li><a class="toc-link" data-slug="${doc.slug}" data-search="${doc.title.toLowerCase()}" href="#/${doc.slug}">${doc.title}</a></li>`;
+        })
         .join("");
       return `
         <div class="toc-part" data-part="${part.id}">
@@ -155,14 +167,26 @@ function renderLanding() {
   const cards = MANIFEST.parts
     .map((part) => {
       const items = part.docs
-        .map(
-          (doc, i) => `
-        <a class="landing-card" href="#/${doc.slug}">
-          <div class="landing-card-num">${part.id === "meta" ? "ㆍ" : String(i + 1).padStart(2, "0")}</div>
+        .map((doc, i) => {
+          if (doc.url) {
+            return `
+        <a class="landing-card" href="${doc.url}">
+          <div class="landing-card-num">↗</div>
           <div class="landing-card-title">${doc.title}</div>
         </a>
-      `
-        )
+      `;
+          }
+          const num =
+            part.id === "meta" || part.id === "external"
+              ? "ㆍ"
+              : String(i + 1).padStart(2, "0");
+          return `
+        <a class="landing-card" href="#/${doc.slug}">
+          <div class="landing-card-num">${num}</div>
+          <div class="landing-card-title">${doc.title}</div>
+        </a>
+      `;
+        })
         .join("");
       return `
         <section class="landing-part">

@@ -190,6 +190,12 @@ a:hover { text-decoration: underline; }
   font-weight: 500;
 }
 .toc-link.hidden { display: none; }
+.toc-link .ext-arrow {
+  color: var(--text-dim);
+  font-size: 12px;
+  margin-left: 4px;
+}
+.toc-link.toc-external:hover .ext-arrow { color: var(--accent); }
 
 .page-toc ol {
   list-style: none;
