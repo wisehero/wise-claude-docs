@@ -4,6 +4,49 @@
 
 ---
 
+## 2026-04-22
+
+### 수정
+
+- `claude/07-이미지-입력.md` — 이미지 크기/장수 제한 수치 최신 공식 Vision 문서 기준으로 교체
+  - 기존: "API 5MB, claude.ai 10MB" (오류)
+  - 수정: claude.ai 메시지당 20장, API 200K 모델 요청당 100장·그 외 모델 600장, 표준 엔드포인트 요청 크기 32MB
+- `claude/06-도구-사용.md` — Extended Thinking과 `tool_choice` 조합 제약 추가
+  - thinking 활성 시 `auto`와 `none`만 허용, `any`·특정 tool 강제는 API 에러
+- `claude/08-프롬프트-캐싱.md` — 최신 캐싱 기능 반영
+  - 자동 캐싱(Automatic Prompt Caching)과 breakpoint 슬롯 예약 동작 추가
+  - `ttl: "1h"` 지정 문법과 혼합 TTL 사용 시 순서 제약(1h이 5m보다 앞) 추가
+  - 참고 문서 링크를 `platform.claude.com` 경로로 갱신
+- `claude/04-모델-선택-가이드.md`, `claude/05-확장-사고.md`, `claude/07-이미지-입력.md` — 공식 문서 재확인 후 단정문 조정
+  - `Option+P`/`Alt+P`(모델 전환), `Option+T`/`Alt+T`(thinking 토글), `Ctrl+V`(이미지 붙여넣기)는 Claude Code 공식 [Interactive mode](https://code.claude.com/docs/en/interactive-mode) 문서에 모두 명시되어 있어 유지하되, macOS Option-as-Meta 설정 조건과 출처 링크를 함께 표시
+  - "Extended Thinking이 복잡도에 따라 자동 활성화된다"는 서술은 공식 문서 근거가 없어 관측 기반 참고 설명으로 완화
+  - "파일 경로만 언급하면 자동 분석된다"는 서술도 공식 근거가 없어 "`Read` 도구로 분석할 수 있다, 요청을 명시하는 편이 안정적" 수준으로 완화
+
+### 변경
+
+- `claude-code/02-CLAUDE-md-작성-가이드.md` — "자동 메모리(Auto Memory)" 섹션 대폭 확장
+  - 네 가지 메모리 타입(user / feedback / project / reference) 분류와 선택 기준
+  - 메모리 파일 frontmatter 포맷(`name`, `description`, `type`)과 feedback/project 본문 구조(`**Why:**` / `**How to apply:**`)
+  - `MEMORY.md` 인덱스 파일 형식·200줄 제한·한 줄 포인터 규칙
+  - 저장 금기 목록(코드 패턴, git 이력, 디버깅 레시피 등)과 이유
+  - 검증 원칙 — 메모리는 작성 시점 스냅샷이므로 경로·함수명 재확인 후 사용
+  - 플랜·태스크·CLAUDE.md와 메모리의 경계 정리
+
+### 추가
+
+- **Part 4: Codex CLI 활용** — `codex/` 디렉터리에 7개 문서 신규 작성
+  - `01-시작하기.md` — 설치, 인증, 세 가지 승인 모드, 첫 작업 따라하기
+  - `02-AGENTS-md-작성-가이드.md` — AGENTS.md 파일 구조, 계층, 섹션별 작성 원칙
+  - `03-모델과-설정.md` — o3/o4-mini/codex-1 비교, config.yaml 구조, 환경 변수
+  - `04-샌드박스와-보안.md` — macOS Seatbelt vs Linux Landlock, 커널 수준 격리 원리
+  - `05-실전-워크플로우.md` — Git 연동, 기능 구현, 리팩토링, 버그 수정, 코드 리뷰 패턴
+  - `06-비대화형-모드와-자동화.md` — codex exec, GitHub Actions 연동, JSON 출력
+  - `07-Claude-Code와-비교.md` — 성능, 보안, 자동화, 비용 비교 및 상황별 선택 가이드
+  - `08-단축키와-명령어.md` — 서브명령어, 글로벌 플래그, exec/resume/fork 전용 플래그, 슬래시 명령어 전체 레퍼런스
+- **README.md** — Part 4 Codex CLI 섹션, 학습 경로 D(자동화/CI 담당자) 추가
+
+---
+
 ## 2026-04-13
 
 ### 추가

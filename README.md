@@ -1,12 +1,12 @@
-# Claude & Claude Code & Claude Cowork 활용 가이드
+# Claude & Claude Code & Claude Cowork & Codex CLI 활용 가이드
 
-이 가이드는 Claude, Claude Code, Claude Cowork를 실전에서 효과적으로 활용하기 위한 공식 문서 기반 학습 자료입니다. Anthropic 공식 문서를 바탕으로 정리했으며, 처음 시작하는 사람부터 이미 사용 중인 사람까지 모두를 대상으로 합니다.
+이 가이드는 Claude, Claude Code, Claude Cowork, OpenAI Codex CLI를 실전에서 효과적으로 활용하기 위한 공식 문서 기반 학습 자료입니다. 각 도구의 공식 문서를 바탕으로 정리했으며, 처음 시작하는 사람부터 이미 사용 중인 사람까지 모두를 대상으로 합니다.
 
 ---
 
 ## 이 가이드를 읽기 전에
 
-Claude는 AI 모델이고, Claude Code는 개발자를 위한 CLI 도구이며, Claude Cowork는 비개발자를 위한 데스크톱 에이전트입니다. 셋은 별개이지만 같은 Claude 모델 위에서 동작합니다. 이 가이드는 세 도구를 모두 다루며, Part 1(Claude), Part 2(Claude Code), Part 3(Claude Cowork)로 나뉩니다.
+Claude는 AI 모델이고, Claude Code는 Anthropic의 개발자용 CLI 에이전트, Claude Cowork는 비개발자를 위한 데스크톱 에이전트, Codex CLI는 OpenAI의 터미널 기반 코딩 에이전트입니다. 이 가이드는 네 도구를 모두 다루며, Part 1(Claude), Part 2(Claude Code), Part 3(Claude Cowork), Part 4(Codex CLI)로 나뉩니다.
 
 ---
 
@@ -28,6 +28,19 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 ### 경로 B: 이미 사용 중인 분
 
 기본은 알고 있고 특정 주제를 더 깊이 파고 싶다면, 아래 전체 문서 목록에서 관심 있는 항목을 직접 선택하세요.
+
+### 경로 D: 자동화/CI 담당자 — Codex CLI 시작하기
+
+CI/CD 파이프라인에 AI를 붙이거나 반복 작업을 완전 자동화하고 싶다면 아래 순서를 추천합니다.
+
+| 순서 | 문서 | 이유 |
+|------|------|------|
+| 1 | [Codex CLI 시작하기](codex/01-시작하기.md) | 설치와 세 가지 승인 모드 이해 |
+| 2 | [AGENTS.md 작성 가이드](codex/02-AGENTS-md-작성-가이드.md) | 프로젝트 규칙 에이전트에 전달하기 |
+| 3 | [샌드박스와 보안](codex/04-샌드박스와-보안.md) | 자동화 전 보안 모델 이해 |
+| 4 | [비대화형 모드와 자동화](codex/06-비대화형-모드와-자동화.md) | GitHub Actions 등 파이프라인 연동 |
+| 5 | [Claude Code와 비교](codex/07-Claude-Code와-비교.md) | 도구 선택 기준 이해 |
+| 6 | 나머지 | 필요한 주제 선택 |
 
 ### 경로 C: 비개발자 — Claude Cowork 시작하기
 
@@ -85,6 +98,19 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 | [안전하게 사용하기](claude-cowork/07-안전하게-사용하기.md) | 기초 | 보안 4계층, 폴더 권한, 민감 데이터 보호, Computer Use 주의사항 |
 | [팀 도입 가이드](claude-cowork/08-팀-도입-가이드.md) | 중급~심화 | RBAC, 예산 관리, 사용량 분석, 단계별 도입 전략 |
 
+### Part 4: Codex CLI 활용
+
+| 문서 | 난이도 | 설명 |
+|------|--------|------|
+| [시작하기](codex/01-시작하기.md) | 기초 | 설치, 인증, 세 가지 승인 모드, 첫 작업 따라하기 |
+| [AGENTS.md 작성 가이드](codex/02-AGENTS-md-작성-가이드.md) | 기초~중급 | 파일 구조, 계층, 섹션별 작성 원칙, 실전 예시 |
+| [모델과 설정](codex/03-모델과-설정.md) | 기초~중급 | o3/o4-mini/codex-1 비교, config.yaml 구조 |
+| [샌드박스와 보안](codex/04-샌드박스와-보안.md) | 중급 | macOS Seatbelt vs Linux Landlock, 커널 수준 격리 |
+| [실전 워크플로우](codex/05-실전-워크플로우.md) | 중급 | Git 연동, 기능 구현, 리팩토링, 버그 수정, 코드 리뷰 |
+| [비대화형 모드와 자동화](codex/06-비대화형-모드와-자동화.md) | 중급~심화 | codex exec, GitHub Actions, JSON 출력, Makefile 통합 |
+| [Claude Code와 비교](codex/07-Claude-Code와-비교.md) | 기초~중급 | 성능, 보안, 자동화, 비용 비교 및 상황별 선택 가이드 |
+| [단축키와 명령어](codex/08-단축키와-명령어.md) | 기초 | 서브명령어, 글로벌 플래그, 슬래시 명령어 전체 레퍼런스 |
+
 ### 부록
 
 | 문서 | 설명 |
@@ -128,6 +154,13 @@ Claude Code를 처음 설치하거나, 프롬프트 작성 경험이 없다면 �
 - [Claude Code Overview](https://docs.anthropic.com/en/docs/claude-code/overview) - Claude Code 소개
 - [Claude Code Quickstart](https://docs.anthropic.com/en/docs/claude-code/quickstart) - 빠른 시작 가이드
 - [Claude Code GitHub](https://github.com/anthropics/claude-code) - 소스 및 릴리스 노트
+
+### Codex CLI 공식 문서
+
+- [Codex Overview](https://developers.openai.com/codex/) - Codex CLI 소개
+- [Codex CLI GitHub](https://github.com/openai/codex) - 소스 및 릴리스 노트
+- [AGENTS.md 가이드](https://developers.openai.com/codex/guides/agents-md) - 프로젝트 지침 파일 작성법
+- [Non-interactive mode](https://developers.openai.com/codex/noninteractive) - CI/CD 자동화
 
 ### Claude Cowork 공식 문서
 
