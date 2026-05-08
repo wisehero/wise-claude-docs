@@ -262,10 +262,41 @@ a:hover { text-decoration: underline; }
   max-width: 680px;
 }
 
+.landing-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 28px;
+}
+.landing-chip {
+  padding: 8px 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.landing-chip:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.landing-chip.is-active {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .landing-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 28px;
+}
+.landing-grid[data-filter="anthropic"] .landing-part[data-vendor="openai"],
+.landing-grid[data-filter="openai"] .landing-part[data-vendor="anthropic"] {
+  display: none;
 }
 .landing-part h2 {
   font-size: 20px;

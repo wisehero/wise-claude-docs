@@ -5,6 +5,7 @@ const MANIFEST = {
   parts: [
     {
       id: "claude",
+      vendor: "anthropic",
       title: "Part 1 · Claude 활용",
       desc: "프롬프팅, 모델 선택, 도구 사용 등 Claude 모델 활용의 기초와 심화",
       docs: [
@@ -20,6 +21,7 @@ const MANIFEST = {
     },
     {
       id: "claude-code",
+      vendor: "anthropic",
       title: "Part 2 · Claude Code 활용",
       desc: "CLI 도구로서 Claude Code의 설정, 스킬, 훅, MCP, 워크플로우",
       docs: [
@@ -35,6 +37,7 @@ const MANIFEST = {
     },
     {
       id: "claude-cowork",
+      vendor: "anthropic",
       title: "Part 3 · Claude Cowork 활용",
       desc: "비개발자를 위한 데스크톱 에이전트 Cowork 사용법",
       docs: [
@@ -49,7 +52,24 @@ const MANIFEST = {
       ],
     },
     {
+      id: "codex",
+      vendor: "openai",
+      title: "Part 4 · OpenAI Codex CLI 활용",
+      desc: "OpenAI의 터미널 코딩 에이전트 Codex CLI — 설치, AGENTS.md, 샌드박스, 자동화, Claude Code와의 비교",
+      docs: [
+        { slug: "codex/01-시작하기", title: "시작하기" },
+        { slug: "codex/02-AGENTS-md-작성-가이드", title: "AGENTS.md 작성 가이드" },
+        { slug: "codex/03-모델과-설정", title: "모델과 설정" },
+        { slug: "codex/04-샌드박스와-보안", title: "샌드박스와 보안" },
+        { slug: "codex/05-실전-워크플로우", title: "실전 워크플로우" },
+        { slug: "codex/06-비대화형-모드와-자동화", title: "비대화형 모드와 자동화" },
+        { slug: "codex/07-Claude-Code와-비교", title: "Claude Code와 비교" },
+        { slug: "codex/08-단축키와-명령어", title: "단축키와 명령어" },
+      ],
+    },
+    {
       id: "appendix",
+      vendor: "shared",
       title: "부록",
       desc: "트러블슈팅, 인물 인사이트",
       docs: [
@@ -61,6 +81,7 @@ const MANIFEST = {
     },
     {
       id: "meta",
+      vendor: "shared",
       title: "메타",
       desc: "레포 자체에 대한 문서",
       docs: [
@@ -70,6 +91,7 @@ const MANIFEST = {
     },
     {
       id: "external",
+      vendor: "shared",
       title: "별도 페이지",
       desc: "단독 정적 페이지로 제공되는 가이드",
       docs: [
@@ -158,11 +180,17 @@ function setActiveSidebar(slug) {
   });
 }
 
+const VENDOR_FILTERS = [
+  { id: "all", label: "전체" },
+  { id: "anthropic", label: "Anthropic — Claude · Claude Code · Cowork" },
+  { id: "openai", label: "OpenAI — Codex CLI" },
+];
+
 function renderLanding() {
   setActiveSidebar(null);
   pageTocEl.innerHTML = "";
   rightRailInnerEl.hidden = true;
-  document.title = "wise-claude-docs · Claude 한국어 가이드";
+  document.title = "wise-claude-docs · Claude · Codex 한국어 가이드";
 
   const cards = MANIFEST.parts
     .map((part) => {
@@ -189,7 +217,7 @@ function renderLanding() {
         })
         .join("");
       return `
-        <section class="landing-part">
+        <section class="landing-part" data-vendor="${part.vendor || "shared"}">
           <h2>${part.title}</h2>
           <p class="landing-part-desc">${part.desc}</p>
           <div class="landing-cards">${items}</div>
@@ -198,16 +226,37 @@ function renderLanding() {
     })
     .join("");
 
+  const chips = VENDOR_FILTERS
+    .map(
+      (f, i) =>
+        `<button class="landing-chip${i === 0 ? " is-active" : ""}" data-vendor="${f.id}" role="tab" aria-selected="${i === 0}">${f.label}</button>`
+    )
+    .join("");
+
   contentEl.innerHTML = `
     <header class="landing-hero">
-      <p class="landing-eyebrow">Anthropic 공식 문서 기반 한국어 가이드</p>
-      <h1>Claude · Claude Code · Claude Cowork 활용 가이드</h1>
-      <p>프롬프팅 기초부터 하네스 엔지니어링, 비개발자용 Cowork 도입까지 — 27개 문서를 한 페이지에서 탐색합니다.</p>
-      <p style="font-size:14px;color:var(--text-dim);">사이드바에서 문서를 선택하거나, 검색창으로 빠르게 찾을 수 있습니다.</p>
+      <p class="landing-eyebrow">Anthropic · OpenAI 공식 문서 기반 한국어 가이드</p>
+      <h1>Claude · Claude Code · Claude Cowork · Codex CLI 활용 가이드</h1>
+      <p>프롬프팅 기초부터 하네스 엔지니어링, 비개발자용 Cowork 도입, OpenAI Codex CLI까지 — 한 페이지에서 탐색합니다.</p>
+      <p style="font-size:14px;color:var(--text-dim);">아래 도구 필터로 좁혀 보거나, 사이드바 검색으로 바로 찾을 수 있습니다.</p>
     </header>
-    <div class="landing-grid">${cards}</div>
+    <div class="landing-filter" role="tablist" aria-label="도구 필터">${chips}</div>
+    <div class="landing-grid" data-filter="all">${cards}</div>
   `;
   window.scrollTo({ top: 0 });
+
+  const grid = contentEl.querySelector(".landing-grid");
+  contentEl.querySelectorAll(".landing-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const v = chip.dataset.vendor;
+      grid.dataset.filter = v;
+      contentEl.querySelectorAll(".landing-chip").forEach((c) => {
+        const active = c === chip;
+        c.classList.toggle("is-active", active);
+        c.setAttribute("aria-selected", active ? "true" : "false");
+      });
+    });
+  });
 }
 
 function buildPageToc(rootEl, slug) {
