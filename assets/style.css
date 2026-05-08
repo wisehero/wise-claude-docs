@@ -391,6 +391,8 @@ a:hover { text-decoration: underline; }
 .doc-nav .next { text-align: right; }
 
 /* Markdown body */
+.md { min-width: 0; }
+
 .md h1 {
   font-size: 32px;
   letter-spacing: -0.02em;
@@ -463,6 +465,7 @@ a:hover { text-decoration: underline; }
 
 .md table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin: 18px 0;
   font-size: 14.5px;
@@ -471,7 +474,11 @@ a:hover { text-decoration: underline; }
   text-align: left;
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
+.md table code { word-break: break-all; }
 .md table th {
   background: var(--code-bg);
   font-weight: 600;
