@@ -4,6 +4,64 @@
 
 ---
 
+## 2026-05-12
+
+### 수정 (Part 1·Part 2 공식 docs 동기화)
+
+- `claude-code/01-시작하기.md` — Claude Code 공식 quickstart 기준으로 최신화
+  - Native install 자동 업데이트 동작 명시
+  - Homebrew `claude-code@latest` cask, Linux apt/dnf/apk 패키지 매니저 안내 추가
+  - Windows CMD 설치 명령(`install.cmd`) 추가, Git for Windows 정확한 역할(Bash 도구 한정) 보강
+  - Microsoft Foundry(Azure) 인증 옵션, Console 첫 로그인 시 "Claude Code" 워크스페이스 자동 생성 안내 추가
+  - 슬래시 명령 표에 `/resume` 추가, `claude commit` 별도 서브명령(실재하지 않음) 제거
+  - settings.json 예제에서 존재하지 않는 모델 ID(`claude-opus-4-5`) → `claude-opus-4-7` 정정
+- `claude-code/04-훅-시스템.md` — Hook 이벤트·타입·결정 API 최신화
+  - 누락되어 있던 이벤트(`Setup`, `UserPromptSubmit` 외 `UserPromptExpansion`, `PermissionDenied`, `PostToolBatch`) 추가, 카테고리별 표로 재정리
+  - Hook 타입에 `mcp_tool` 추가(총 5종), `agent`는 실험적으로 분류
+  - 종료 코드 외에 JSON 기반 결정 API(`hookSpecificOutput`의 `permissionDecision: allow|deny|ask|defer`, 최상위 `decision: block`) 사용법 추가
+  - 참고 문서 링크를 `code.claude.com` 경로로 갱신
+- `claude-code/05-MCP-서버-연동.md` — `claude mcp` CLI 실제 동작 기준 최신화
+  - `add` 서브명령의 `--transport stdio|sse|http`, `--scope local|user|project`, `-e/--env`, `-H/--header`, OAuth 플래그(`--client-id`, `--client-secret`, `--callback-port`) 정리
+  - scope 표를 3단계(local/user/project)로 확장, workspace trust 다이얼로그·`reset-project-choices` 동작 추가
+  - 보조 서브명령(`add-json`, `add-from-claude-desktop`, `serve`) 안내 추가
+  - 참고 문서 링크 `code.claude.com`으로 갱신, Anthropic MCP Registry API 링크 추가
+- `claude-code/03-커스텀-스킬.md` — 공식 Skills 문서 기준 대폭 보강
+  - 4단계 scope(Enterprise/Personal/Project/Plugin) 표로 재정리, 라이브 변경 감지·모노레포 nested discovery 추가
+  - "Custom commands가 스킬로 통합됨" 안내와 번들 스킬(`/simplify`, `/batch`, `/debug`, `/loop`, `/claude-api`) 소개 추가
+  - Frontmatter 표를 공식 필드 기준으로 재작성: `name` 선택, `when_to_use`, `arguments`, `hooks`, `shell`, `paths`(glob) 추가; `effort` 값은 `low/medium/high/xhigh/max`로 정정
+  - 변수 치환에 `$ARGUMENTS[N]`, 명명 인자 `$name`, `${CLAUDE_SESSION_ID}`, `${CLAUDE_EFFORT}`, `${CLAUDE_SKILL_DIR}` 추가
+  - 동적 컨텍스트 주입에 multi-line ```` ```! ```` 블록과 `disableSkillShellExecution` 정책 안내 추가
+  - 보조 파일에 `scripts/` 실행 자산 패턴 명시(참조용 `references/`와 구분)
+  - 이 문서 레포에 `skills/` 디렉터리가 없음을 명확화하고, 예시는 별도 레포 사례로 표기
+  - `version` 필드는 공식 frontmatter가 아닌 커뮤니티 컨벤션임을 명시
+- `claude/06-도구-사용.md` — Tool use API 최신화
+  - Client tool / Server tool(`web_search`, `code_execution`, `web_fetch`, `tool_search`) 구분 추가, 서버 도구 호출 예시 보강
+  - `"strict": true` 옵션(스키마 정합성 강제) 섹션 추가
+  - 참고 문서 링크를 `platform.claude.com` 경로로 갱신
+
+### 점검 결과 (Part 1·Part 2 변경 없음)
+
+- `claude/01-03`(프롬프트 기초·고급·시스템): 모델 무관한 기초 콘텐츠로 stale 위험 낮음 — 본 동기화에서는 점검만, 변경 없음
+- `claude/04-모델-선택-가이드.md`, `claude/05`, `claude/07`, `claude/08`: 2026-04-22 시점 갱신본이 현재 라인업과 일치
+- `claude-code/02-CLAUDE-md-작성-가이드.md`, `claude-code/06-실전-워크플로우.md`, `claude-code/07-단축키와-명령어.md`: 최근(2026-04-12~22) 갱신본 — 본 세션에서는 변경 없음
+
+### 수정 (Part 3·Part 4·Appendix 동기화)
+
+- `claude-cowork/04-외부-도구-연동.md` — 기타 커넥터 표에 **Microsoft 365**·**Slack** 추가(공식 [Plugins 가이드](https://support.claude.com/en/articles/13837440-use-plugins-in-claude-cowork)에 명시되어 있으나 누락되어 있었음). 전체 카탈로그는 공식 문서와 `anthropics/knowledge-work-plugins` 레포에서 확인하도록 안내 추가.
+- `appendix/문제-해결.md` — 참고 문서 URL 3개를 `docs.anthropic.com`에서 새 도메인 `code.claude.com`으로 갱신. 본문은 변경 없음.
+
+### 점검 결과 (Part 3·Part 4·Appendix 변경 없음)
+
+- `claude-cowork/01-03, 05-08`: 2026-04-13 작성본. spot-check 결과(plan 라인업, Skills/Plugins/Scheduled tasks/Dispatch 구조, RBAC·예산 관리, Computer Use 안내) 본문 명백한 stale 없음 — 변경 없음
+- `codex/01-08`: 2026-04-22 작성본. spot-check 결과(GPT-5.4 / GPT-5.4-mini / GPT-5.3-codex / -spark 모델 라인업, Seatbelt/Landlock 샌드박스, `approval_policy`/`sandbox_mode`, exec 서브명령 플래그) 본문 명백한 stale 없음 — 변경 없음
+- `appendix/맷-포콕-스킬-모음.md`(2026-05-07), `appendix/보리스-체르니-인사이트.md`·`appendix/안드레이-카파시-개념.md`(2026-04-25): 인용 기반의 정적 콘텐츠로 추가 갱신 없음
+
+### 동기화 범위 메모
+
+본 동기화는 외부 공식 docs와의 fact-check 깊이가 섹션별로 다르다. Part 1·Part 2(특히 5개 핵심 문서)는 공식 docs와 deep diff를 수행했고, Part 3·Part 4·Appendix는 spot-check 위주로 진행했다 — 후자의 본문은 일반적 설명 위주이며 명백한 stale을 발견하지 못해 변경하지 않았다. 다음 동기화 시에는 가격 표·커넥터 카탈로그 등 데이터성 콘텐츠를 우선 검증할 것을 권장한다.
+
+---
+
 ## 2026-04-22
 
 ### 수정

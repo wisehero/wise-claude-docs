@@ -1,6 +1,6 @@
 # MCP 서버 연동
 
-> **난이도**: 중급~심화 | **선행 문서**: [Claude Code 시작하기](01-시작하기.md) | **최초 작성**: 2026-03-31 | **마지막 수정**: 2026-03-31
+> **난이도**: 중급~심화 | **선행 문서**: [Claude Code 시작하기](01-시작하기.md) | **최초 작성**: 2026-03-31 | **마지막 수정**: 2026-05-12
 >
 > Model Context Protocol(MCP)의 개념과 Claude Code에서 외부 서비스를 연동하는 방법을 다룬다.
 
@@ -31,21 +31,30 @@ MCP 서버는 세 가지 요소를 Claude에게 제공한다.
 가장 빠른 방법이다. 터미널에서 아래 형식으로 명령을 실행한다.
 
 ```bash
+# stdio 서버 (기본 transport)
 claude mcp add <서버-이름> -- <실행-명령> [인자...]
+
+# HTTP 서버
+claude mcp add --transport http <서버-이름> <URL>
+
+# HTTP 서버 + 인증 헤더
+claude mcp add --transport http <서버-이름> <URL> --header "Authorization: Bearer ..."
+
+# 환경 변수 주입
+claude mcp add -e API_KEY=xxx <서버-이름> -- npx my-mcp-server
 ```
 
-예를 들어 GitHub MCP 서버를 추가하려면 다음과 같이 입력한다.
+지원 transport는 세 가지다 — `stdio`(기본), `sse`, `http`. `--transport` 플래그를 명시하지 않으면 stdio로 처리한다. HTTP/SSE 원격 서버는 OAuth 인증도 지원한다(`--client-id`, `--client-secret`, `--callback-port` 플래그).
+
+CLI로 추가하면 설정이 scope에 따라 다른 파일에 기록된다. `-s|--scope` 플래그로 적용 범위를 지정한다.
 
 ```bash
-claude mcp add github -- npx @anthropic-ai/github-mcp
+claude mcp add --scope local <이름> -- ...      # 현재 프로젝트, 로컬 전용(개인) — 기본값
+claude mcp add --scope user <이름> -- ...       # 모든 프로젝트에서 사용 가능(개인)
+claude mcp add --scope project <이름> -- ...    # 프로젝트 루트의 .mcp.json에 기록(팀 공유)
 ```
 
-CLI로 추가하면 설정이 `~/.claude/.mcp.json`(글로벌) 또는 `.mcp.json`(프로젝트)에 자동으로 기록된다. 범위를 지정하려면 `-s` 플래그를 사용한다.
-
-```bash
-claude mcp add --scope local github -- npx @anthropic-ai/github-mcp   # 현재 프로젝트에만 적용
-claude mcp add --scope user github -- npx @anthropic-ai/github-mcp    # 모든 프로젝트에 적용
-```
+JSON 한 줄로 등록하고 싶다면 `add-json`을 쓴다. Claude Desktop의 MCP 설정을 그대로 가져오려면 `add-from-claude-desktop`을 쓴다(macOS·WSL 한정).
 
 ### 설정 파일로 추가
 
@@ -78,24 +87,15 @@ claude mcp add --scope user github -- npx @anthropic-ai/github-mcp    # 모든 �
 
 ## 설정 범위
 
-MCP 서버 설정은 두 범위로 나뉜다.
+MCP 서버 설정은 세 가지 scope로 나뉜다.
 
-### 글로벌 설정
+| Scope | 저장 위치 | 적용 범위 | 용도 |
+|---|---|---|---|
+| `local`(기본) | 현재 디렉터리 전용 사용자 설정 | 현재 프로젝트, 본인만 | 실험적으로 시도하는 개인 서버 |
+| `user` | 사용자 글로벌 설정(`~/.claude.json` 내 mcpServers) | 모든 프로젝트, 본인만 | 자주 쓰는 개인 서버(GitHub, Notion 등) |
+| `project` | 프로젝트 루트의 `.mcp.json` | 해당 프로젝트, 팀 공유(git 커밋) | 팀이 공유해야 하는 DB·내부 도구 서버 |
 
-```
-~/.claude.json
-```
-
-모든 프로젝트에서 공통으로 사용할 MCP 서버를 등록한다. 개인 개발 환경에서 자주 쓰는 서버(GitHub, Notion 등)는 글로벌로 등록해두면 프로젝트마다 반복 설정할 필요가 없다.
-
-### 프로젝트 설정
-
-```
-.mcp.json         # 프로젝트 루트
-.claude/.mcp.json # .claude 디렉토리 안
-```
-
-특정 프로젝트에서만 사용할 MCP 서버를 등록한다. 이 파일은 git에 커밋해 팀과 공유한다. 프로젝트에 필요한 데이터베이스 서버나 특수 도구를 여기에 정의한다.
+프로젝트 범위로 등록된 서버는 처음 사용 시 워크스페이스 신뢰(workspace trust) 다이얼로그를 통해 사용자가 명시적으로 승인해야 한다. 승인 이력을 초기화하려면 `claude mcp reset-project-choices`를 실행한다.
 
 ### 환경 변수로 민감한 값 관리
 
@@ -218,6 +218,12 @@ claude mcp get github
 
 # 서버 제거
 claude mcp remove github
+
+# 프로젝트 .mcp.json 서버의 승인/거부 이력 초기화
+claude mcp reset-project-choices
+
+# Claude Code 자체를 MCP 서버로 노출(다른 도구에서 Claude Code를 클라이언트로 사용)
+claude mcp serve
 ```
 
 ### 서버 상태 확인 및 디버깅
@@ -352,6 +358,7 @@ MCP 서버를 처음 도입할 때 모든 서버를 한꺼번에 설정하려 �
 
 이 문서는 아래 Anthropic 공식 문서를 기반으로 작성되었다.
 
-- [Claude Code MCP](https://docs.anthropic.com/en/docs/claude-code/mcp)
+- [Claude Code MCP](https://code.claude.com/docs/en/mcp)
 - [Model Context Protocol](https://modelcontextprotocol.io)
 - [MCP Servers Registry](https://github.com/modelcontextprotocol/servers)
+- Anthropic MCP Registry API: https://api.anthropic.com/mcp-registry/docs

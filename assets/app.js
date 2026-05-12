@@ -451,9 +451,206 @@ function updateProgress() {
   progressEl.style.width = pct + "%";
 }
 
-// Search filter
+// ============================================================
+// Search — sidebar TOC filter + full-text page search
+// ============================================================
+
+// Lazy full-text index: slug -> { title, partTitle, text }
+const SEARCH_INDEX = new Map();
+let searchIndexBuilding = null; // promise while building
+let searchMode = false; // true while showing results page
+let searchDebounceTimer = null;
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function stripMarkdown(md) {
+  // Remove fenced code, inline code, images, link syntax, html, headings markers, list markers, blockquotes.
+  return md
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]*`/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^\s*>\s?/gm, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/_{1,2}([^_]+)_{1,2}/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function ensureSearchIndex() {
+  if (searchIndexBuilding) return searchIndexBuilding;
+  if (SEARCH_INDEX.size === FLAT_DOCS.length) return Promise.resolve();
+  searchIndexBuilding = Promise.all(
+    FLAT_DOCS.map(async (doc) => {
+      if (SEARCH_INDEX.has(doc.slug)) return;
+      try {
+        const res = await fetch(`./${doc.slug}.md`);
+        if (!res.ok) return;
+        const md = await res.text();
+        SEARCH_INDEX.set(doc.slug, {
+          title: doc.title,
+          partTitle: doc.partTitle,
+          text: stripMarkdown(md),
+        });
+      } catch (_) {
+        // ignore individual failures
+      }
+    })
+  ).then(() => {
+    searchIndexBuilding = null;
+  });
+  return searchIndexBuilding;
+}
+
+function buildSnippets(text, q, max = 2) {
+  const lower = text.toLowerCase();
+  const needle = q.toLowerCase();
+  const snippets = [];
+  let from = 0;
+  for (let i = 0; i < max; i++) {
+    const idx = lower.indexOf(needle, from);
+    if (idx === -1) break;
+    const start = Math.max(0, idx - 50);
+    const end = Math.min(text.length, idx + needle.length + 80);
+    const before = (start > 0 ? "… " : "") + text.slice(start, idx);
+    const hit = text.slice(idx, idx + needle.length);
+    const after = text.slice(idx + needle.length, end) + (end < text.length ? " …" : "");
+    snippets.push(
+      `${escapeHtml(before)}<mark class="search-hit">${escapeHtml(hit)}</mark>${escapeHtml(after)}`
+    );
+    from = idx + needle.length;
+  }
+  return snippets;
+}
+
+function searchFullText(q) {
+  const needle = q.toLowerCase();
+  const results = [];
+  for (const doc of FLAT_DOCS) {
+    const entry = SEARCH_INDEX.get(doc.slug);
+    if (!entry) continue;
+    const titleHit = entry.title.toLowerCase().includes(needle);
+    // Count body occurrences
+    let count = 0;
+    let from = 0;
+    const lower = entry.text.toLowerCase();
+    while (true) {
+      const idx = lower.indexOf(needle, from);
+      if (idx === -1) break;
+      count++;
+      from = idx + needle.length;
+      if (count >= 30) break; // cap counting cost
+    }
+    if (!titleHit && count === 0) continue;
+    const score = (titleHit ? 50 : 0) + count;
+    const snippets = count > 0 ? buildSnippets(entry.text, q, 2) : [];
+    results.push({
+      slug: doc.slug,
+      title: entry.title,
+      partTitle: entry.partTitle,
+      count,
+      titleHit,
+      score,
+      snippets,
+    });
+  }
+  results.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+  return results;
+}
+
+function renderSearchResults(q, results) {
+  searchMode = true;
+  setActiveSidebar(null);
+  pageTocEl.innerHTML = "";
+  rightRailInnerEl.hidden = true;
+  document.title = `"${q}" 검색 결과 · wise-claude-docs`;
+
+  const items = results
+    .map((r) => {
+      const snippetsHtml = r.snippets.length
+        ? r.snippets.map((s) => `<p class="search-result-snippet">${s}</p>`).join("")
+        : r.titleHit
+        ? `<p class="search-result-snippet">제목에서 일치</p>`
+        : "";
+      const hitsLabel = r.count > 0 ? `본문 ${r.count}회 일치` : "제목 일치";
+      return `
+        <a class="search-result" href="#/${r.slug}" data-slug="${r.slug}">
+          <p class="search-result-crumb">${escapeHtml(r.partTitle)} · ${hitsLabel}</p>
+          <p class="search-result-title">${escapeHtml(r.title)}</p>
+          ${snippetsHtml}
+        </a>
+      `;
+    })
+    .join("");
+
+  const body = results.length
+    ? items
+    : `<div class="search-empty">"${escapeHtml(q)}"와(과) 일치하는 문서가 없습니다.</div>`;
+
+  contentEl.innerHTML = `
+    <div class="search-results">
+      <header class="search-results-header">
+        <h2>"${escapeHtml(q)}" 검색 결과</h2>
+        <p class="search-results-meta">${results.length}개 문서 일치</p>
+      </header>
+      ${body}
+    </div>
+  `;
+  window.scrollTo({ top: 0 });
+}
+
+function renderSearchLoading(q) {
+  searchMode = true;
+  setActiveSidebar(null);
+  pageTocEl.innerHTML = "";
+  rightRailInnerEl.hidden = true;
+  contentEl.innerHTML = `
+    <div class="search-results">
+      <header class="search-results-header">
+        <h2>"${escapeHtml(q)}" 검색 결과</h2>
+        <p class="search-results-meta">문서를 색인하는 중…</p>
+      </header>
+      <div class="search-loading">검색 인덱스를 만들고 있습니다. 잠시만 기다려 주세요.</div>
+    </div>
+  `;
+  window.scrollTo({ top: 0 });
+}
+
+async function runFullTextSearch(q) {
+  const before = q;
+  const indexReady = SEARCH_INDEX.size === FLAT_DOCS.length;
+  if (!indexReady) {
+    renderSearchLoading(q);
+    await ensureSearchIndex();
+    // user may have changed the query while we were building
+    if (searchEl.value.trim().toLowerCase() !== before) return;
+  }
+  const results = searchFullText(q);
+  if (searchEl.value.trim().toLowerCase() !== before) return;
+  renderSearchResults(q, results);
+}
+
+function exitSearchMode() {
+  if (!searchMode) return;
+  searchMode = false;
+  route(); // re-render current route
+}
+
+// Search filter — sidebar TOC (title-only) + optional full-text body search
 function applySearch() {
   const q = searchEl.value.trim().toLowerCase();
+  // 1) Always filter sidebar TOC by title.
   document.querySelectorAll(".toc-link").forEach((a) => {
     if (!q) {
       a.classList.remove("hidden");
@@ -466,6 +663,17 @@ function applySearch() {
     const visible = part.querySelectorAll(".toc-link:not(.hidden)").length;
     part.style.display = visible ? "" : "none";
   });
+
+  // 2) Full-text body search (debounced, min 2 chars).
+  clearTimeout(searchDebounceTimer);
+  if (!q) {
+    exitSearchMode();
+    return;
+  }
+  if (q.length < 2) return;
+  searchDebounceTimer = setTimeout(() => {
+    runFullTextSearch(q);
+  }, 180);
 }
 
 function openSidebar() { sidebarEl.classList.add("open"); }
@@ -476,6 +684,21 @@ renderSidebar();
 window.addEventListener("hashchange", route);
 window.addEventListener("scroll", updateProgress, { passive: true });
 searchEl.addEventListener("input", applySearch);
+searchEl.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    searchEl.value = "";
+    applySearch();
+    searchEl.blur();
+  }
+});
+// Clicking a search result returns to a normal doc view — clear the query.
+contentEl.addEventListener("click", (e) => {
+  const hit = e.target.closest(".search-result");
+  if (!hit) return;
+  searchEl.value = "";
+  // Defer so the hash change fires its hashchange handler first.
+  setTimeout(() => applySearch(), 0);
+});
 menuToggle.addEventListener("click", openSidebar);
 
 // Intercept anchor jumps within current doc — scroll without triggering route()
