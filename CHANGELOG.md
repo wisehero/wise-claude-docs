@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-05-13
+
+### 추가 (부록 시리즈)
+
+- `appendix/김영규-oh-my-openagent.md` §4 — Hephaestus 깊이 보기 섹션 추가 (이후 섹션 5~9로 시프트)
+  - `src/agents/hephaestus/agent.ts`·`AGENTS.md`·`gpt-5-5.ts`·`builtin-agents/hephaestus-agent.ts` 4종 1차 자료 기준
+  - 에이전트 구성표(`mode: primary`, `maxTokens: 32000`, `reasoningEffort: medium`, `color: #D97706`, `cost: EXPENSIVE`, `call_omo_agent: deny`) 정리 — 다른 OMO 에이전트 재귀 호출 금지로 "혼자 끝내는 자율 워커" 포지션 강제
+  - 모델 변형 4종(gpt-5-5/gpt-5-4/gpt-5-3-codex/gpt) 라우팅 로직과 모델별 프롬프트 분리 사유
+  - GPT-5.5 시스템 프롬프트 6블록 원문 인용 분석 — (4.3.1) "Default: implement, don't propose", "Status requests are not stop signals", (4.3.2) Intent Extraction Table 6행 원문, (4.3.3) "Start broad once" 병렬 2~5개 fan-out 정책 + 폴링 금지, (4.3.4) **Manual QA Gate** — TUI/Web/HTTP/Library/no-surface 5개 표면별 강제 검증, (4.3.5) Three-Attempt Failure Protocol의 롤백 강제 5단 시퀀스, (4.3.6) Hard Invariants 6개 절대 금지 조항
+  - 운영 루프 5단계(Explore→Plan→Implement→Verify→Manually QA)와 Prometheus와의 포지션 차이
+  - 적합/부적합 사용 시나리오와 `EXPENSIVE` 라벨의 진짜 의미
+  - 이 가이드 레포 관점에서 가져갈 4가지 패턴(Manual QA Gate 강제 조항화, Intent Extraction Table 한국어 완곡표현 매핑, Three-Attempt Protocol의 롤백 묶음, Hard Invariants 분리 명시)
+
+- `appendix/김영규-oh-my-openagent.md` — 한국 개발자 김영규(@code-yeongyu)의 OpenCode 플러그인 [`oh-my-openagent`](https://github.com/code-yeongyu/oh-my-openagent) 해부 문서 신설
+  - `docs/manifesto.md`의 5가지 핵심 주장(인간 개입 = 실패 신호, 구분 불가 품질 기준, 토큰 = 투자, 인지 부하 최소화, 컴파일러 같은 예측 가능성) 정리
+  - 그리스 신화 모티프 에이전트 캐스트(Sisyphus/Hephaestus/Prometheus/Atlas/Oracle/Librarian 등)와 카테고리 기반 모델 라우팅(`visual-engineering`/`ultrabrain`/`deep`/`quick` 등) 매핑 정리
+  - 핵심 기능 정리: Hashline(Can Bölük "The Harness Problem"의 oh-my-pi 패턴 이식, 6.7% → 68.3% 사례), IntentGate, Ralph Loop / `/ulw-loop` + Todo Enforcer 페어링, Team Mode v4.0 (12개 `team_*` 도구, `hyperplan`/`security-research` 스킬), `/init-deep`, Skill-Embedded MCP, Comment Checker, 모델 폴백 체인, OAuth MCP
+  - "비판적으로 볼 부분" 섹션 — OpenCode 종속, Anthropic 차단 서사의 1차 출처가 트윗이라는 점, 벤치마크 출처 단일성, Team Mode 제약, `ultrawork` 적용 범위 한계
+  - 이 가이드 레포에 가져올 만한 것(Hashline 패턴, 카테고리→모델 매핑 분리, `/init-deep` 한국어판, PreToolUse 가드)과 가져오면 안 되는 것(캐릭터 네이밍, Team Mode 자체) 구분
+  - [하네스 엔지니어링](claude-code/08-하네스-엔지니어링.md)·[커스텀 스킬](claude-code/03-커스텀-스킬.md)·[AGENTS.md 작성 가이드](codex/02-AGENTS-md-작성-가이드.md)·[보리스 체르니 인사이트](appendix/보리스-체르니-인사이트.md)·[맷 포콕 스킬 모음](appendix/맷-포콕-스킬-모음.md)·[카파시 개념](appendix/안드레이-카파시-개념.md)과 상호 링크
+- `README.md` — 부록 표에 새 문서 행 추가
+- `assets/app.js` — 부록 섹션 docs 배열에 신규 슬러그 등록
+
+---
+
 ## 2026-05-12
 
 ### 수정 (Part 1·Part 2 공식 docs 동기화)

@@ -77,6 +77,7 @@ const MANIFEST = {
         { slug: "appendix/보리스-체르니-인사이트", title: "보리스 체르니의 Claude Code 설계 사상" },
         { slug: "appendix/안드레이-카파시-개념", title: "안드레이 카파시의 LLM 개념 사전" },
         { slug: "appendix/맷-포콕-스킬-모음", title: "맷 포콕의 Skills For Real Engineers 정리" },
+        { slug: "appendix/김영규-oh-my-openagent", title: "김영규의 Oh My OpenAgent 해부" },
       ],
     },
     {

@@ -119,6 +119,7 @@ CI/CD 파이프라인에 AI를 붙이거나 반복 작업을 완전 자동화하
 | [보리스 체르니의 Claude Code 설계 사상](appendix/보리스-체르니-인사이트.md) | Anthropic Head of Claude Code의 공개 발언 정리 — "왜 그렇게 만들었는가" |
 | [안드레이 카파시의 LLM 개념 사전](appendix/안드레이-카파시-개념.md) | Software 3.0, Vibe Coding, Context Engineering 등 시그니처 개념의 1차 출처 정리 |
 | [맷 포콕의 "Skills For Real Engineers" 정리](appendix/맷-포콕-스킬-모음.md) | `mattpocock/skills` 저장소의 4대 실패 모드 진단과 17개 스킬 카탈로그 정리 |
+| [김영규의 Oh My OpenAgent 해부](appendix/김영규-oh-my-openagent.md) | `oh-my-openagent`(OMO) 플러그인의 매니페스토·에이전트 캐스트·Hashline·Team Mode 정리와 비판적 검토 |
 
 ---
 
